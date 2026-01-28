@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sepet | Pınar Oto Aksesuar</title>
+
+  <style>
+    :root{
+      --bg:#fff1f6;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#f2c6d8;
+      --pink:#ff2e88;
+      --pink2:#ff66ad;
+      --radius:16px;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .topbar{
+      background: linear-gradient(90deg, var(--pink), var(--pink2));
+      color:#fff;
+      padding:10px;
+      white-space: nowrap;
+      overflow:hidden;
+    }
+    .topbar span{
+      display:inline-block;
+      padding-left:100%;
+      animation: marquee 16s linear infinite;
+    }
+    @keyframes marquee{
+      0%{ transform: translateX(0); }
+      100%{ transform: translateX(-100%); }
+    }
+
+    .wrap{
+      max-width: 950px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .back{
+      display:inline-block;
+      margin: 8px 0 14px;
+      text-decoration:none;
+      font-weight:900;
+      color: var(--pink);
+    }
+
+    h1{ margin: 0 0 12px; }
+
+    .empty{
+      background:#fff;
+      border: 1px dashed var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      text-align:center;
+      color: var(--muted);
+    }
+
+    .item{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-bottom: 12px;
+    }
+
+    .thumb{
+      width: 92px;
+      height: 92px;
+      border-radius: 12px;
+      object-fit: cover;
+      border:1px solid var(--line);
+      background:#ffe3ef;
+      flex: 0 0 auto;
+    }
+
+    .info{ flex:1; }
+    .name{ font-weight:900; margin:0 0 6px; }
+    .meta{ margin:0 0 6px; font-size:12px; color: var(--muted); }
+    .price{ margin:0; font-weight:900; color: var(--pink); }
+
+    .right{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap:8px;
+      min-width: 140px;
+    }
+
+    .qty{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .qty button{
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border:1px solid var(--line);
+      background:#fff;
+      cursor:pointer;
+      font-weight:900;
+    }
+    .qty span{
+      min-width: 22px;
+      text-align:center;
+      font-weight:900;
+    }
+
+    .remove{
+      border:none;
+      background:none;
+      color:#ef4444;
+      font-weight:900;
+      cursor:pointer;
+    }
+
+    .summary{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .row{
+      display:flex;
+      justify-content:space-between;
+      font-weight:900;
+      margin-bottom: 10px;
+    }
+
+    .inputs{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+
+    .inputs input{
+      width:100%;
+      padding:12px;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      outline:none;
+      background:#fff;
+    }
+
+    .inputs input.full{ grid-column: 1 / -1; }
+
+    .btn{
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:14px;
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      margin-top: 10px;
+    }
+
+    .btn.whatsapp{ background:#25D366; }
+    .btn.gray{ background:#111; }
+
+    @media (max-width: 700px){
+      .inputs{ grid-template-columns: 1fr; }
+      .right{ min-width: 120px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <span>Pınar Oto Aksesuar • Orijinal Ürün • Ücretsiz Kargo • Satış Sonrası Destek</span>
+  </div>
+
+  <div class="wrap">
+    <a class="back" href="index.html">← Alışverişe devam et</a>
+    <h1>Sepetim</h1>
+
+    <div id="list"></div>
+
+    <div id="summary" class="summary" style="display:none;">
+      <div class="row">
+        <span>Toplam</span>
+        <span id="total">₺ 0</span>
+      </div>
+
+      <div style="font-weight:900; margin: 8px 0 6px;">Teslimat Bilgileri</div>
+      <div class="inputs">
+        <input id="custName" placeholder="Ad Soyad">
+        <input id="custPhone" placeholder="Telefon">
+        <input id="custCity" placeholder="İl / İlçe" class="full">
+        <input id="custAddress" placeholder="Adres" class="full">
+      </div>
+
+      <button class="btn whatsapp" onclick="checkoutWhatsApp()">WhatsApp’tan Siparişi Tamamla</button>
+      <button class="btn gray" onclick="clearCart()">Sepeti Temizle</button>
+    </div>
+  </div>
+
+  <script>
+    // Giriş kontrol (istersen kaldırabilirsin)
+    const user = JSON.parse(localStorage.getItem("user") || "null");
+    if(!user){
+      alert("Sepeti görmek için giriş yapmalısın");
+      window.location.href = "login.html";
+    }
+
+    function getCart(){
+      return JSON.parse(localStorage.getItem("cart") || "[]");
+    }
+    function setCart(cart){
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function money(n){
+      return "₺ " + (Number(n)||0).toLocaleString("tr-TR");
+    }
+
+    function renderCart(){
+      const listEl = document.getElementById("list");
+      const summary = document.getElementById("summary");
+      const totalEl = document.getElementById("total");
+
+      const cart = getCart();
+
+      if(cart.length === 0){
+        listEl.innerHTML = `<div class="empty">Sepetiniz boş 🛒</div>`;
+        summary.style.display = "none";
+        return;
+      }
+
+      let total = 0;
+
+      listEl.innerHTML = cart.map((p,i)=>{
+        const qty = p.qty || 1;
+        const price = Number(p.price) || 0;
+        const sub = qty * price;
+        total += sub;
+
+        return `
+          <div class="item">
+            <img class="thumb" src="images/${p.img}" alt="">
+            <div class="info">
+              <p class="name">${p.name}</p>
+              <p class="meta">${p.brand || "-"} / ${p.model || "-"} / ${p.year || "-"}</p>
+              <p class="price">${money(price)}</p>
+            </div>
+
+            <div class="right">
+              <div class="qty">
+                <button onclick="decQty(${i})">-</button>
+                <span>${qty}</span>
+                <button onclick="incQty(${i})">+</button>
+              </div>
+              <button class="remove" onclick="removeItem(${i})">Sil</button>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      totalEl.textContent = money(total);
+      summary.style.display = "block";
+    }
+
+    function incQty(i){
+      const cart = getCart();
+      cart[i].qty = (cart[i].qty || 1) + 1;
+      setCart(cart);
+      renderCart();
+    }
+
+    function decQty(i){
+      const cart = getCart();
+      cart[i].qty = (cart[i].qty || 1) - 1;
+      if(cart[i].qty <= 0){
+        cart.splice(i,1);
+      }
+      setCart(cart);
+      renderCart();
+    }
+
+    function removeItem(i){
+      const cart = getCart();
+      cart.splice(i,1);
+      setCart(cart);
+      renderCart();
+    }
+
+    function clearCart(){
+      localStorage.removeItem("cart");
+      renderCart();
+    }
+
+    function checkoutWhatsApp(){
+      const cart = getCart();
+      if(cart.length === 0){
+        alert("Sepet boş 🛒");
+        return;
+      }
+
+      const name = (document.getElementById("custName").value || "").trim();
+      const phone = (document.getElementById("custPhone").value || "").trim();
+      const city = (document.getElementById("custCity").value || "").trim();
+      const address = (document.getElementById("custAddress").value || "").trim();
+
+      let total = 0;
+      const lines = cart.map(p=>{
+        const qty = p.qty || 1;
+        const price = Number(p.price) || 0;
+        const sub = qty * price;
+        total += sub;
+        return `• ${p.name} x${qty} (₺ ${price}) = ₺ ${sub}`;
+      });
+
+      const msg =
+`Merhaba Pınar Oto Aksesuar,
+Sipariş vermek istiyorum ✅
+
+${lines.join("\n")}
+
+Toplam: ₺ ${total}
+
+Ad Soyad: ${name || "-"}
+Telefon: ${phone || "-"}
+İl/İlçe: ${city || "-"}
+Adres: ${address || "-"}`;
+
+      const sellerPhone = "905531785602";
+      window.open(`https://wa.me/${sellerPhone}?text=${encodeURIComponent(msg)}`, "_blank");
+
+      clearCart();
+      alert("Sipariş WhatsApp'a hazırlandı ✅ Sepet temizlendi.");
+    }
+
+    renderCart();
+  </script>
+  <script>
+function getUser(){
+  return JSON.parse(localStorage.getItem("user") || "null");
+}
+
+function logout(){
+  localStorage.removeItem("user");
+  window.location.reload();
+}
+
+function getCart(){
+  return JSON.parse(localStorage.getItem("cart") || "[]");
+}
+
+function updateCartCount(){
+  const cart = getCart();
+  const total = cart.reduce((sum,item)=> sum + (item.qty||1), 0);
+  const el = document.getElementById("cartCount");
+  if(el) el.textContent = total;
+}
+
+function renderAuth(){
+  const user = getUser();
+  const el = document.getElementById("authArea");
+  if(!el) return;
+
+  if(user){
+    const displayName = user.name || user.email;
+    el.innerHTML = `
+      <span style="font-weight:900;">${displayName}</span>
+      <a class="member-link" href="#" onclick="logout()">Çıkış</a>
+      <a class="cart-link" href="cart.html">
+        Sepet (<span id="cartCount">0</span>)
+      </a>
+    `;
+  }else{
+    el.innerHTML = `
+      <a class="member-link" href="login.html">Giriş Yap</a>
+      <a class="member-link" href="uye.html">Üye Ol</a>
+      <a class="cart-link" href="cart.html">
+        Sepet (<span id="cartCount">0</span>)
+      </a>
+    `;
+  }
+
+  updateCartCount();
+}
+
+renderAuth();
+</script>
+</body>
+</html>

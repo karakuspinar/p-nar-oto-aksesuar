@@ -1,0 +1,480 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Ürün Detay - Pınar Oto Aksesuar</title>
+
+  <style>
+    :root{
+      --bg:#fff1f6;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#f2c6d8;
+
+      --pink:#ff2e88;
+      --pink2:#ff66ad;
+      --pink3:#ffd1e3;
+
+      --radius:16px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ÜST BAR (KAYAN) */
+    .topbar{
+      background: linear-gradient(90deg, var(--pink), var(--pink2));
+      color:#fff;
+      padding:10px 12px;
+      font-size:14px;
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      overflow:hidden;
+      white-space: nowrap;
+    }
+    .topbar .marquee{
+      display:inline-block;
+      padding-left:100%;
+      animation: marquee 16s linear infinite;
+    }
+    @keyframes marquee{
+      0%{ transform: translateX(0); }
+      100%{ transform: translateX(-100%); }
+    }
+
+    /* HEADER */
+    .header{
+      background: var(--card);
+      border-bottom: 1px solid var(--line);
+    }
+    .header-inner{
+      max-width:1100px;
+      margin:0 auto;
+      padding:14px 16px;
+      display:flex;
+      gap:14px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:nowrap;
+    }
+    .brand{
+      display:flex;
+      flex-direction:column;
+      gap:4px;
+      min-width: 220px;
+    }
+    .brand strong{ font-size:20px; }
+    .brand small{ color:var(--muted); font-size:12px; }
+
+    .header-actions{
+      margin-left:auto;
+      display:flex;
+      gap:10px;
+      white-space: nowrap;
+      align-items:center;
+    }
+    .member-link,
+    .cart-link{
+      text-decoration:none;
+      font-weight:900;
+      padding:12px 14px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      color: var(--text);
+    }
+    .member-link:hover,
+    .cart-link:hover{
+      background: var(--pink3);
+      opacity:.95;
+    }
+
+    /* WRAP */
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:16px;
+    }
+
+    .back{
+      display:inline-block;
+      margin: 8px 0 14px;
+      text-decoration:none;
+      font-weight:900;
+      color: var(--pink);
+    }
+
+    .detail{
+      display:grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap:16px;
+      align-items:start;
+    }
+
+    .card{
+      background: var(--card);
+      border:1px solid var(--line);
+      border-radius: var(--radius);
+      overflow:hidden;
+    }
+
+    .img{
+      width:100%;
+      height:360px;
+      object-fit:cover;
+      display:block;
+      background:#ffe3ef;
+    }
+
+    .content{ padding:14px; }
+    h1{ margin:0 0 6px; font-size:20px; }
+    .meta{ margin:0 0 12px; color:var(--muted); font-size:13px; }
+
+    .price{
+      font-weight:900;
+      font-size:22px;
+      color: var(--pink);
+      margin: 0 0 12px;
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .pill{
+      padding:10px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-weight:900;
+      font-size:13px;
+    }
+
+    .btn{
+      width:100%;
+      padding:12px;
+      border:none;
+      border-radius:14px;
+      background: linear-gradient(90deg, var(--pink), var(--pink2));
+      color:#fff;
+      cursor:pointer;
+      font-weight:900;
+      margin-top:12px;
+    }
+    .btn:hover{ opacity:.93; }
+
+    .desc{
+      line-height:1.6;
+      font-size:14px;
+      color:#374151;
+      margin-top:12px;
+    }
+
+    .mini{
+      margin-top:12px;
+      padding:12px;
+      border:1px dashed var(--line);
+      border-radius:14px;
+      background:#fff;
+      color:#374151;
+      font-size:13px;
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      background: linear-gradient(90deg, var(--pink), var(--pink2));
+      color: #fff;
+      padding: 12px 14px;
+      border-radius: 14px;
+      font-weight: 900;
+      box-shadow: 0 10px 24px rgba(0,0,0,.18);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity .2s ease, transform .2s ease;
+      z-index: 999;
+      pointer-events: none;
+    }
+    .toast.show{ opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px){
+      .header-inner{ flex-direction: column; align-items:stretch; }
+      .header-actions{ justify-content: space-between; }
+      .detail{ grid-template-columns: 1fr; }
+      .brand{ min-width:auto; text-align:center; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="topbar">
+    <span class="marquee">
+      Pınar Oto Aksesuar • Orijinal Ürün • Ücretsiz Kargo • Satış Sonrası Destek •
+      Pınar Oto Aksesuar • Orijinal Ürün • Ücretsiz Kargo • Satış Sonrası Destek
+    </span>
+  </div>
+
+  <div class="header">
+    <div class="header-inner">
+      <div class="brand">
+        <strong>Pınar Oto Aksesuar</strong>
+        <small>Oto Aksesuar & Donanım</small>
+      </div>
+
+      <div class="header-actions" id="authArea"></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <a class="back" href="index.html">← Geri dön</a>
+
+    <div class="detail">
+      <div class="card">
+        <img class="img" id="img" src="images/cam.jpg" alt="Ürün">
+      </div>
+
+      <div class="card">
+        <div class="content">
+          <h1 id="title">Ürün</h1>
+          <p class="meta" id="meta">Uyumlu: Seçtiğin marka/model/yıl</p>
+          <p class="price" id="price"></p>
+
+          <div class="row">
+            <span class="pill" id="brandPill">Marka: -</span>
+            <span class="pill" id="modelPill">Model: -</span>
+            <span class="pill" id="yearPill">Yıl: -</span>
+          </div>
+
+          <button class="btn" onclick="addToCart()">Sepete Ekle</button>
+
+          <div class="mini">
+            <strong>Kısa Bilgi</strong><br>
+            • Orijinal ürün / kaliteli malzeme<br>
+            • Hızlı kargo / güvenli paketleme
+          </div>
+
+          <div class="desc">
+            <strong>Açıklama</strong><br>
+            <span id="descText">Bu alana ürün özelliklerini yazacağız...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast">Sepete eklendi ✅</div>
+
+  <script>
+    // ---------- helpers ----------
+    function showToast(msg){
+      const t = document.getElementById("toast");
+      if(!t) return;
+      t.textContent = msg;
+      t.classList.add("show");
+      clearTimeout(window.__toastTimer);
+      window.__toastTimer = setTimeout(()=> t.classList.remove("show"), 1600);
+    }
+
+    function getUser(){
+      return JSON.parse(localStorage.getItem("user") || "null");
+    }
+    function logout(){
+      localStorage.removeItem("user");
+      location.reload();
+    }
+
+    function getCart(){
+      return JSON.parse(localStorage.getItem("cart") || "[]");
+    }
+    function setCart(cart){
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+    function updateCartCount(){
+      const cart = getCart();
+      const total = cart.reduce((sum,item)=> sum + (item.qty||1), 0);
+      const el = document.getElementById("cartCount");
+      if(el) el.textContent = total;
+    }
+
+    function renderAuth(){
+      const el = document.getElementById("authArea");
+      const user = getUser();
+      if(!el) return;
+
+      if(user){
+        el.innerHTML = `
+          <span style="font-weight:900;">${user.email}</span>
+          <a class="member-link" href="#" onclick="logout()">Çıkış</a>
+          <a class="cart-link" href="cart.html">Sepet(<span id="cartCount">0</span>)</a>
+        `;
+      }else{
+        el.innerHTML = `
+          <a class="member-link" href="login.html">Giriş Yap</a>
+          <a class="member-link" href="uye.html">Üye Ol</a>
+          <a class="cart-link" href="cart.html">Sepet(<span id="cartCount">0</span>)</a>
+        `;
+      }
+      updateCartCount();
+    }
+
+    function getProducts(){
+      return JSON.parse(localStorage.getItem("products") || "[]");
+    }
+
+    // ---------- page data ----------
+    const p = new URLSearchParams(location.search);
+
+    // admin ürünleri için: urun.html?id=...
+    const id = p.get("id");
+
+    if(id){
+      const prod = getProducts().find(x => x.id === id);
+      if(prod){
+        document.getElementById("title").textContent = prod.title || "Ürün";
+        document.getElementById("img").src = "images/" + (prod.img || "cam.jpg");
+
+        if(prod.price && Number(prod.price) > 0){
+          document.getElementById("price").textContent = "₺ " + Number(prod.price);
+        }else{
+          document.getElementById("price").textContent = "";
+        }
+
+        const d = (prod.desc || "").trim();
+        if(d) document.getElementById("descText").textContent = d;
+
+        // category sayfasından gelince araç bilgisi yok, boş geç
+        document.getElementById("brandPill").textContent = "Marka: -";
+        document.getElementById("modelPill").textContent = "Model: -";
+        document.getElementById("yearPill").textContent  = "Yıl: -";
+      }
+    }else{
+      // eski sistem: urun.html?name=...&price=...&img=...&brand=...&model=...&year=...
+      const name  = p.get("name")  || "Ürün";
+      const price = p.get("price") || "";
+      const img   = p.get("img")   || "cam.jpg";
+      const brand = p.get("brand") || "-";
+      const model = p.get("model") || "-";
+      const year  = p.get("year")  || "-";
+
+      document.getElementById("title").textContent = name;
+
+      if(price && price !== "0"){
+        document.getElementById("price").textContent = "₺ " + price;
+      }else{
+        document.getElementById("price").textContent = "";
+      }
+
+      document.getElementById("img").src = "images/" + img;
+
+      document.getElementById("brandPill").textContent = "Marka: " + brand;
+      document.getElementById("modelPill").textContent = "Model: " + model;
+      document.getElementById("yearPill").textContent  = "Yıl: " + year;
+    }
+
+    // ---------- cart action ----------
+    function addToCart(){
+      const user = getUser();
+      if(!user){
+        alert("Sepete eklemek için giriş yapmalısın");
+        window.location.href = "login.html";
+        return;
+      }
+
+      const title = document.getElementById("title").textContent || "Ürün";
+      const priceText = document.getElementById("price").textContent || "₺ 0";
+      const priceNum = Number(priceText.replace(/[^\d]/g, "")) || 0;
+
+      const imgSrc = document.getElementById("img").getAttribute("src") || "images/cam.jpg";
+      const imgFile = imgSrc.replace("images/", "");
+
+      const brand = (document.getElementById("brandPill").textContent || "").replace("Marka: ", "") || "-";
+      const model = (document.getElementById("modelPill").textContent || "").replace("Model: ", "") || "-";
+      const year  = (document.getElementById("yearPill").textContent  || "").replace("Yıl: ", "") || "-";
+
+      const cart = getCart();
+      const found = cart.find(it =>
+        it.name === title &&
+        it.img === imgFile &&
+        it.brand === brand &&
+        it.model === model &&
+        it.year === year
+      );
+
+      if(found){
+        found.qty = (found.qty || 1) + 1;
+      }else{
+        cart.push({ name:title, price:priceNum, img:imgFile, brand, model, year, qty:1 });
+      }
+
+      setCart(cart);
+      updateCartCount();
+      showToast("Sepete eklendi ✅");
+    }
+
+    // start
+    renderAuth();
+  </script>
+  <script>
+function getUser(){
+  return JSON.parse(localStorage.getItem("user") || "null");
+}
+
+function logout(){
+  localStorage.removeItem("user");
+  window.location.reload();
+}
+
+function getCart(){
+  return JSON.parse(localStorage.getItem("cart") || "[]");
+}
+
+function updateCartCount(){
+  const cart = getCart();
+  const total = cart.reduce((sum,item)=> sum + (item.qty||1), 0);
+  const el = document.getElementById("cartCount");
+  if(el) el.textContent = total;
+}
+
+function renderAuth(){
+  const user = getUser();
+  const el = document.getElementById("authArea");
+  if(!el) return;
+
+  if(user){
+    const displayName = user.name || user.email;
+    el.innerHTML = `
+      <span style="font-weight:900;">${displayName}</span>
+      <a class="member-link" href="#" onclick="logout()">Çıkış</a>
+      <a class="cart-link" href="cart.html">
+        Sepet (<span id="cartCount">0</span>)
+      </a>
+    `;
+  }else{
+    el.innerHTML = `
+      <a class="member-link" href="login.html">Giriş Yap</a>
+      <a class="member-link" href="uye.html">Üye Ol</a>
+      <a class="cart-link" href="cart.html">
+        Sepet (<span id="cartCount">0</span>)
+      </a>
+    `;
+  }
+
+  updateCartCount();
+}
+
+renderAuth();
+</script>
+</body>
+</html>
