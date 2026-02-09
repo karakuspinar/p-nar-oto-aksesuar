@@ -240,7 +240,7 @@ function renderCategories(){
   const grid = document.getElementById("grid");
   grid.innerHTML = categories.map(c => `
     <div class="card" data-name="${c.key}">
-    <img class="img" src="images/${c.img}">
+    <img class="img" src="/p-nar-oto-aksesuar/images/${c.img}">
       <div class="info">
         <div class="title">${c.title}</div>
         <div class="meta">Orijinal ürün</div>
@@ -284,4 +284,5 @@ render();
 </body>
 
 </html>
+
 
