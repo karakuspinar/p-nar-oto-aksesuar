@@ -1,190 +1,128 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin - Ürün Ekle</title>
-  <style>
-    :root{ --bg:#fff1f6; --line:#f2c6d8; --pink:#ff2e88; --pink2:#ff66ad; --muted:#6b7280; }
-    body{ margin:0; font-family:Arial,sans-serif; background:var(--bg); }
-    <div style="font-size:22px;color:red;font-weight:900">
-TEST 123
-</div>
-    .wrap{ max-width:900px; margin:0 auto; padding:16px; }
-    .card{ background:#fff; border:1px solid var(--line); border-radius:16px; padding:16px; }
-    h1{ margin:0 0 12px; color:var(--pink); }
-    .row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    label{ font-weight:900; font-size:13px; }
-    input,select{ width:100%; padding:12px; border:1px solid var(--line); border-radius:12px; }
-    .btn{
-      border:none; border-radius:14px; padding:12px 14px;
-      font-weight:900; cursor:pointer; color:#fff;
-      background:linear-gradient(90deg,var(--pink),var(--pink2));
-    }
-    .btn.gray{ background:#111; }
-    .bar{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
-    .hint{ color:var(--muted); font-size:12px; margin:8px 0 0; }
-    .list{ margin-top:14px; }
-    .item{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      border-top:1px solid var(--line); padding:10px 0;
-    }
-    .left{ display:flex; gap:10px; align-items:center; }
-    .thumb{ width:70px; height:50px; object-fit:cover; border-radius:10px; border:1px solid var(--line); background:#ffe3ef; }
-    .name{ font-weight:900; }
-    .small{ font-size:12px; color:var(--muted); }
-    .danger{ background:#ff3b30; }
-    @media (max-width:700px){ .row{ grid-template-columns:1fr; } }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Admin Panel</title>
+
+<style>
+body{font-family:Arial;background:#fff1f6;margin:0}
+.wrap{max-width:1000px;margin:auto;padding:20px}
+.card{background:#fff;padding:20px;border-radius:16px;border:1px solid #ffd1e3}
+h1{color:#ff2e88}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input,select{padding:12px;border-radius:12px;border:1px solid #ffc0d9;width:100%}
+button{padding:12px 14px;border:none;border-radius:14px;font-weight:bold;cursor:pointer}
+.btn{background:#ff2e88;color:#fff}
+.btn2{background:#111;color:#fff}
+.list{margin-top:20px}
+.item{display:flex;justify-content:space-between;border-top:1px solid #eee;padding:10px 0}
+</style>
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="card">
-      <h1>Admin • Ürün Ekle</h1>
+<div class="wrap">
+<div class="card">
 
-      <div class="row">
-        <div>
-          <label>Başlık</label>
-          <input id="title" placeholder="Örn: Telefon Tutucu Magnet" />
-        </div>
+<h1>Admin • Ürün Ekle</h1>
 
-        <div>
-          <label>Kategori (Seç)</label>
-          <select id="category">
-            <option value="">Kategori seç</option>
-            <option value="cam">Cam</option>
-            <option value="difuzor">Difüzör</option>
-            <option value="kolcak">Kolçak</option>
-            <option value="krom">Krom</option>
-            <option value="kaput">Kaput</option>
-            <option value="paspas">Paspas</option>
-            <option value="koltuk">Koltuk</option>
-            <option value="marspiyel">Marşpiyel</option>
-            <option value="tavan">Tavan</option>
-            <option value="ayna">Ayna</option>
-            <option value="jant">Jant</option>
-            <option value="tozluk">Tozluk</option>
-            <option value="telefon">Telefon</option>
-          </select>
-        </div>
+<div class="row">
+<input id="title" placeholder="Başlık">
+<select id="category">
+<option value="">Kategori</option>
+<option value="paspas">Paspas</option>
+<option value="tozluk">Tozluk</option>
+<option value="cam">Cam</option>
+<option value="difuzor">Difüzör</option>
+</select>
 
-        <div>
-          <label>Resim Dosyası</label>
-          <input id="img" placeholder="örn: telefon.jpg (images klasöründe)" />
-          <div class="hint">Resimleri <b>images/</b> klasörüne koy. Buraya sadece dosya adını yaz.</div>
-        </div>
+<input id="img" placeholder="resim.jpg">
+<input id="price" placeholder="299">
+</div>
 
-        <div>
-          <label>Fiyat</label>
-          <input id="price" placeholder="örn: 299" />
-        </div>
+<input id="desc" placeholder="Açıklama" style="margin-top:10px">
 
-        <div style="grid-column: 1 / -1;">
-          <label>Açıklama</label>
-          <input id="desc" placeholder="Ürün açıklaması (malzeme, uyum, montaj...)" />
-        </div>
-      </div>
+<div style="margin-top:10px">
+<button class="btn" onclick="add()">Kaydet</button>
+<button class="btn2" onclick="download()">JSON indir</button>
+</div>
 
-      <div class="bar">
-        <button class="btn" onclick="addProduct()">Kaydet</button>
-        <button class="btn gray" onclick="openSite()">Siteyi Aç</button>
-        <button class="btn danger" onclick="resetAll()">Tümünü Sıfırla</button>
-      </div>
+<hr>
 
-      <div class="hint">
-        Bu admin panel localStorage kullanır. Gerçek hostingte admin için sunucu gerekir.
-      </div>
+<h3>Excel (CSV) ile yükle</h3>
+<input type="file" id="csv" onchange="csvYukle(event)">
 
-      <div class="list" id="list"></div>
-    </div>
-  </div>
+<div class="list" id="list"></div>
+
+</div>
+</div>
 
 <script>
-  const KEY = "products";
+const KEY="products";
 
-  function getProducts(){
-    return JSON.parse(localStorage.getItem(KEY) || "[]");
-  }
-  function setProducts(arr){
-    localStorage.setItem(KEY, JSON.stringify(arr));
-  }
+function get(){return JSON.parse(localStorage.getItem(KEY)||"[]")}
+function set(v){localStorage.setItem(KEY,JSON.stringify(v))}
 
-  function addProduct(){
-    const title = document.getElementById("title").value.trim();
-    const category = (document.getElementById("category").value || "").trim().toLowerCase();
-    const img = document.getElementById("img").value.trim();
-    const price = Number((document.getElementById("price").value || "").replace(/[^\d]/g,"")) || 0;
-    const desc = document.getElementById("desc").value.trim();
+function add(){
+let p=get();
+p.push({
+title:title.value,
+category:category.value,
+img:img.value,
+price:Number(price.value),
+desc:desc.value
+});
+set(p);
+render();
+alert("Eklendi");
+}
 
-    if(!title || !category || !img){
-      alert("Başlık + kategori + resim zorunlu");
-      return;
-    }
+function render(){
+let p=get();
+list.innerHTML=p.map((x,i)=>`
+<div class="item">
+${x.title} - ${x.price}
+<button onclick="sil(${i})">sil</button>
+</div>`).join("");
+}
 
-    const products = getProducts();
-    const id = Date.now().toString(); // benzersiz id
+function sil(i){
+let p=get();
+p.splice(i,1);
+set(p);
+render();
+}
 
-    products.push({ id, title, category, img, price, desc });
-    setProducts(products);
+function download(){
+let data=JSON.stringify(get(),null,2);
+let blob=new Blob([data]);
+let a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="products.json";
+a.click();
+}
 
-    document.getElementById("title").value = "";
-    document.getElementById("category").value = "";
-    document.getElementById("img").value = "";
-    document.getElementById("price").value = "";
-    document.getElementById("desc").value = "";
+function csvYukle(e){
+let file=e.target.files[0];
+let reader=new FileReader();
+reader.onload=function(){
+let rows=reader.result.split("\n").slice(1);
+let p=get();
+rows.forEach(r=>{
+let c=r.split(",");
+if(c.length>2){
+p.push({title:c[0],category:c[1],img:c[2],price:c[3],desc:c[4]})
+}
+});
+set(p);
+render();
+alert("Excel yüklendi");
+}
+reader.readAsText(file);
+}
 
-    renderList();
-    alert("Kaydedildi ✅");
-  }
-
-  function removeAt(i){
-    const products = getProducts();
-    products.splice(i,1);
-    setProducts(products);
-    renderList();
-  }
-
-  function resetAll(){
-    if(!confirm("Tüm ürünleri silmek istiyor musun?")) return;
-    localStorage.removeItem(KEY);
-    renderList();
-  }
-
-  function openSite(){
-    window.location.href = "index.html";
-  }
-
-  function renderList(){
-    const products = getProducts();
-    const el = document.getElementById("list");
-
-    if(products.length === 0){
-      el.innerHTML = "<p class='hint'>Henüz ürün yok. Formdan ekleyebilirsin.</p>";
-      return;
-    }
-
-    el.innerHTML = products.map((p,i)=>`
-      <div class="item">
-        <div class="left">
-          <img class="thumb" src="images/${p.img}" alt="">
-          <div>
-            <div class="name">${p.title}</div>
-            <div class="small">
-              kategori: ${p.category} • fiyat: ${p.price ? ("₺"+p.price) : "—"} • resim: ${p.img}
-            </div>
-            <div class="small">${p.desc ? ("açıklama: " + p.desc) : ""}</div>
-          </div>
-        </div>
-        <button class="btn danger" onclick="removeAt(${i})">Sil</button>
-      </div>
-    `).join("");
-  }
-
-  renderList();
+render();
 </script>
 
 </body>
-
 </html>
-
