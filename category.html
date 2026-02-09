@@ -1,325 +1,59 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kategori - Pınar Oto Aksesuar</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kategori</title>
 
-  <style>
-    :root{
-      --bg:#fff1f6;
-      --card:#ffffff;
-      --text:#1f2937;
-      --muted:#6b7280;
-      --line:#f2c6d8;
-      --pink:#ff2e88;
-      --pink2:#ff66ad;
-      --pink3:#ffd1e3;
-      --radius:16px;
-    }
-    *{ box-sizing:border-box; }
-    body{ margin:0; font-family:Arial,sans-serif; background:var(--bg); color:var(--text); }
-
-    .topbar{
-      background:linear-gradient(90deg,var(--pink),var(--pink2));
-      color:#fff; padding:10px; white-space:nowrap; overflow:hidden;
-    }
-    .topbar span{ display:inline-block; padding-left:100%; animation:marquee 16s linear infinite; }
-    @keyframes marquee{ 0%{transform:translateX(0)} 100%{transform:translateX(-100%)} }
-
-    .wrap{ max-width:1100px; margin:0 auto; padding:16px; }
-    .back{ display:inline-block; margin:8px 0 14px; text-decoration:none; font-weight:900; color:var(--pink); }
-
-    .head{
-      display:flex; align-items:end; justify-content:space-between; gap:12px;
-      margin-bottom:12px;
-    }
-    h1{ margin:0; font-size:20px; }
-    .muted{ margin:0; color:var(--muted); font-size:13px; }
-
-    .search{
-      display:flex; gap:10px; margin:12px 0 16px;
-    }
-    .search input{
-      flex:1; padding:12px; border-radius:14px; border:1px solid var(--line); outline:none;
-      background:#fff;
-    }
-    .search button{
-      padding:12px 16px; border:none; border-radius:14px;
-      background:linear-gradient(90deg,var(--pink),var(--pink2));
-      color:#fff; font-weight:900; cursor:pointer;
-    }
-
-    .grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-
-    .card{
-      background:#fff; border:1px solid var(--line);
-      border-radius:var(--radius); overflow:hidden;
-      display:flex; flex-direction:column; transition:.18s ease;
-    }
-    .card:hover{ transform:translateY(-4px); box-shadow:0 16px 32px rgba(255,46,136,.22); }
-
-    .img{ width:100%; height:190px; object-fit:cover; background:#ffe3ef; display:block; }
-    .info{ padding:12px; flex:1; display:flex; flex-direction:column; }
-    .title{ font-weight:900; font-size:16px; }
-    .meta{ font-size:12px; color:var(--muted); }
-    .price{ margin-top:auto; color:var(--pink); font-weight:900; margin-bottom:8px; }
-
-    .btn{
-      width:100%; padding:12px; border:none; border-radius:14px;
-      background:linear-gradient(90deg,var(--pink),var(--pink2));
-      color:#fff; font-weight:900; cursor:pointer;
-    }
-    .btn.gray{ background:#111; }
-
-    .empty{
-      background:#fff; border:1px dashed var(--line);
-      border-radius:16px; padding:16px; color:var(--muted);
-    }
-
-    .toast{
-      position: fixed;
-      right: 18px;
-      bottom: 18px;
-      background: linear-gradient(90deg, var(--pink), var(--pink2));
-      color: #fff;
-      padding: 12px 14px;
-      border-radius: 14px;
-      font-weight: 900;
-      box-shadow: 0 10px 24px rgba(0,0,0,.18);
-      opacity: 0;
-      transform: translateY(12px);
-      transition: opacity .2s ease, transform .2s ease;
-      z-index: 999;
-      pointer-events: none;
-    }
-    .toast.show{ opacity: 1; transform: translateY(0); }
-
-    @media (max-width: 900px){ .grid{ grid-template-columns:repeat(2,1fr); } }
-    @media (max-width: 560px){ .grid{ grid-template-columns:repeat(2,1fr); } }
-  </style>
+<style>
+body{font-family:Arial;margin:0;background:#fff1f6}
+.wrap{max-width:1100px;margin:auto;padding:20px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:#fff;border-radius:14px;padding:10px;border:1px solid #eee}
+.img{width:100%;height:180px;object-fit:cover;background:#eee}
+.btn{width:100%;padding:10px;background:#ff2e88;color:#fff;border:none;border-radius:10px;margin-top:6px}
+</style>
 </head>
 
 <body>
-  <div class="topbar">
-    <span>Pınar Oto Aksesuar • Orijinal Ürün • Ücretsiz Kargo • Satış Sonrası Destek</span>
-  </div>
+<div class="wrap">
+<h2 id="title"></h2>
+<div id="grid" class="grid"></div>
+</div>
 
-  <div class="wrap">
-    <a class="back" href="index.html">← Kategorilere dön</a>
+<script>
+const params = new URLSearchParams(location.search);
+const catKey = (params.get("category")||"").toLowerCase();
+document.getElementById("title").textContent = catKey;
 
-    <div class="head">
-      <h1 id="catTitle">Kategori</h1>
-      <p class="muted" id="catInfo"></p>
+function fixImg(v){
+  if(!v) return "images/cam.jpg";
+  if(v.startsWith("http")) return v;
+  return "images/" + v.replace("images/","").replace("resimler/","");
+}
+
+async function getProducts(){
+  const res = await fetch("products_with_images_only.json");
+  return await res.json();
+}
+
+async function render(){
+  const grid=document.getElementById("grid");
+  const products=await getProducts();
+
+  const list=products.filter(p=>String(p.category).toLowerCase()==catKey);
+
+  grid.innerHTML=list.map(p=>`
+    <div class="card">
+      <img class="img" src="${fixImg(p.img)}">
+      <div>${p.title}</div>
+      <div>₺ ${p.price}</div>
+      <button class="btn">Ürünü Gör</button>
     </div>
-
-    <div class="search">
-      <input id="q" type="text" placeholder="Bu kategoride ürün ara..." />
-      <button onclick="render()">Ara</button>
-    </div>
-
-    <div id="grid" class="grid"></div>
-
-    <div id="empty" class="empty" style="display:none;">
-      Bu kategoride henüz ürün yok. <b>admin.html</b> sayfasından ürün ekle.
-      <br><br>
-      <b>İpucu:</b> Admin’de kategori alanını şu anahtar ile seç:
-      <b><span id="catKeyHint"></span></b>
-    </div>
-  </div>
-
-  <div id="toast" class="toast">Sepete eklendi ✅</div>
-
-  <script>
-    const params = new URLSearchParams(location.search);
-    const catKey = (params.get("category") || "").toLowerCase();
-
-    const titleMap = {
-      cam: "Cam Rüzgarlığı",
-      difuzor: "Difüzör",
-      kolcak: "Kolçak",
-      krom: "Krom Ürünler",
-      kaput: "Ön Kaput",
-      paspas: "Paspas",
-      koltuk: "Koltuk Kılıfı",
-      marspiyel: "Marşpiyel",
-      tavan: "Tavan",
-      ayna: "Ayna",
-      jant: "Jant",
-      tozluk: "Tozluk",
-      telefon: "Telefon Tutucu",
-    };
-
-    document.getElementById("catTitle").textContent = titleMap[catKey] || ("Kategori: " + catKey);
-    document.getElementById("catKeyHint").textContent = catKey || "-";
-
-    function showToast(msg){
-      const t = document.getElementById("toast");
-      if(!t) return;
-      t.textContent = msg;
-      t.classList.add("show");
-      clearTimeout(window.__toastTimer);
-      window.__toastTimer = setTimeout(()=> t.classList.remove("show"), 1600);
-    }
-
-    function getProducts(){
-      return JSON.parse(localStorage.getItem("products") || "[]");
-    }
-
-    function getCart(){
-      return JSON.parse(localStorage.getItem("cart") || "[]");
-    }
-    function setCart(cart){
-      localStorage.setItem("cart", JSON.stringify(cart));
-    }
-
-    function addToCartFromCategory(p){
-      const user = JSON.parse(localStorage.getItem("user") || "null");
-      if(!user){
-        alert("Sepete eklemek için giriş yapmalısın");
-        window.location.href = "login.html";
-        return;
-      }
-
-      const cart = getCart();
-      const found = cart.find(it => it.name === p.title && it.img === p.img);
-
-      if(found){
-        found.qty = (found.qty || 1) + 1;
-      }else{
-        cart.push({
-          name: p.title,
-          price: Number(p.price) || 0,
-          img: p.img,
-          brand: "-",
-          model: "-",
-          year: "-",
-          qty: 1
-        });
-      }
-
-      setCart(cart);
-      showToast("Sepete eklendi ✅");
-    }
-
-    function getCarFilters(){
-  return JSON.parse(localStorage.getItem("carFilters") || "null");
+  `).join("");
 }
 
-function goProduct(p){
-  const f = getCarFilters() || { brand:"", model:"", year:"" };
-
-  const url =
-    `urun.html?name=${encodeURIComponent(p.title)}` +
-    `&price=${encodeURIComponent(p.price || 0)}` +
-    `&img=${encodeURIComponent(p.img)}` +
-    `&brand=${encodeURIComponent(f.brand || "")}` +
-    `&model=${encodeURIComponent(f.model || "")}` +
-    `&year=${encodeURIComponent(f.year || "")}`;
-
-  window.location.href = url;
-}
-
-    function render(){
-      const grid = document.getElementById("grid");
-      const empty = document.getElementById("empty");
-      const q = (document.getElementById("q").value || "").toLowerCase();
-
-      if(!catKey){
-        grid.innerHTML = "";
-        empty.style.display = "block";
-        document.getElementById("catInfo").textContent = "";
-        return;
-      }
-
-      const products = getProducts();
-
-      const list = products
-        .filter(p => String(p.category || "").toLowerCase() === catKey)
-        .filter(p => !q || String(p.title || "").toLowerCase().includes(q));
-
-      document.getElementById("catInfo").textContent = `${list.length} ürün`;
-
-      if(list.length === 0){
-        grid.innerHTML = "";
-        empty.style.display = "block";
-        return;
-      }
-
-      empty.style.display = "none";
-
-      grid.innerHTML = list.map(p => `
-        <div class="card">
-         <img class="img" src="${(p.img || '').startsWith('http') ? p.img : ((p.img || '').includes('/') ? p.img : 'resimler/' + p.img)}" alt="${p.title}">
-          <div class="info">
-            <div class="title">${p.title}</div>
-            <div class="meta">Kategori: ${p.category}</div>
-            <div class="price">₺ ${(Number(p.price)||0)}</div>
-            <button class="btn" onclick='goProduct(${JSON.stringify(p)})'>Ürünü Gör</button>
-            <button class="btn gray" onclick='addToCartFromCategory(${JSON.stringify(p)})'>Sepete Ekle</button>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    document.getElementById("q").addEventListener("keydown", (e)=>{
-      if(e.key === "Enter") render();
-    });
-
-    render();
-  </script>
-  <script>
-function getUser(){
-  return JSON.parse(localStorage.getItem("user") || "null");
-}
-
-function logout(){
-  localStorage.removeItem("user");
-  window.location.reload();
-}
-
-function getCart(){
-  return JSON.parse(localStorage.getItem("cart") || "[]");
-}
-
-function updateCartCount(){
-  const cart = getCart();
-  const total = cart.reduce((sum,item)=> sum + (item.qty||1), 0);
-  const el = document.getElementById("cartCount");
-  if(el) el.textContent = total;
-}
-
-function renderAuth(){
-  const user = getUser();
-  const el = document.getElementById("authArea");
-  if(!el) return;
-
-  if(user){
-    const displayName = user.name || user.email;
-    el.innerHTML = `
-      <span style="font-weight:900;">${displayName}</span>
-      <a class="member-link" href="#" onclick="logout()">Çıkış</a>
-      <a class="cart-link" href="cart.html">
-        Sepet (<span id="cartCount">0</span>)
-      </a>
-    `;
-  }else{
-    el.innerHTML = `
-      <a class="member-link" href="login.html">Giriş Yap</a>
-      <a class="member-link" href="uye.html">Üye Ol</a>
-      <a class="cart-link" href="cart.html">
-        Sepet (<span id="cartCount">0</span>)
-      </a>
-    `;
-  }
-
-  updateCartCount();
-}
-
-renderAuth();
+render();
 </script>
 </body>
-
 </html>
-
-
