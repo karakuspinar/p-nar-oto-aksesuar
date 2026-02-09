@@ -6,54 +6,60 @@
 <title>Kategori</title>
 
 <style>
-body{font-family:Arial;margin:0;background:#fff1f6}
+body{font-family:Arial;background:#fff1f6;margin:0}
 .wrap{max-width:1100px;margin:auto;padding:20px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.card{background:#fff;border-radius:14px;overflow:hidden;padding:10px}
-.img{width:100%;height:180px;object-fit:cover}
-.btn{background:#ff2e88;color:#fff;border:none;padding:10px;width:100%;margin-top:8px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.card{background:#fff;border-radius:14px;overflow:hidden;border:1px solid #eee}
+.img{width:100%;height:200px;object-fit:cover}
+.info{padding:10px}
+.btn{width:100%;padding:12px;background:#ff2e88;color:#fff;border:none;border-radius:10px;margin-top:8px}
 </style>
 </head>
 
 <body>
 
 <div class="wrap">
+<a href="index.html">← geri</a>
 <h2 id="title"></h2>
 <div id="grid" class="grid"></div>
 </div>
 
 <script>
-const BASE = "/p-nar-oto-aksesuar";
-
-function imgFix(v){
-  if(!v) return BASE+"/resimler/placeholder.jpg";
-  if(v.startsWith("http")) return v;
-  return BASE+"/resimler/"+v;
-}
 
 const params = new URLSearchParams(location.search);
-const cat = params.get("category");
+const cat = params.get("category") || "";
 
-document.getElementById("title").textContent = cat;
+document.getElementById("title").innerText = cat;
 
-async function load(){
-  const res = await fetch(BASE+"/veri/urunler.json?"+Date.now());
-  const data = await res.json();
-
-  const list = data.filter(x => x.category === cat);
-
-  document.getElementById("grid").innerHTML =
-  list.map(p=>`
-    <div class="card">
-      <img class="img" src="${imgFix(p.img)}">
-      <b>${p.title}</b>
-      <div>₺ ${p.price}</div>
-      <button class="btn">Ürünü Gör</button>
-    </div>
-  `).join("");
+async function getProducts(){
+ const res = await fetch("veri/urunler.json");
+ return await res.json();
 }
 
-load();
+async function render(){
+ const data = await getProducts();
+ const list = data.filter(p=>p.category===cat);
+
+ const grid=document.getElementById("grid");
+
+ grid.innerHTML=list.map(p=>`
+  <div class="card">
+   <img class="img"
+    src="${p.img}"
+    onerror="this.src='images/cam.jpg'">
+   <div class="info">
+    <b>${p.title}</b>
+    <div>₺ ${p.price}</div>
+    <button class="btn"
+      onclick="location.href='urun.html?name=${encodeURIComponent(p.title)}&img=${p.img}&price=${p.price}'">
+      Ürünü Gör
+    </button>
+   </div>
+  </div>
+ `).join("");
+}
+
+render();
 </script>
 
 </body>
