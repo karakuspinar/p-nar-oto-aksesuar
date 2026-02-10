@@ -1,105 +1,73 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Kategori</title>
-  <style>
-    body{font-family:Arial,sans-serif;margin:0;padding:16px}
-    .top{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
-    .card{border:1px solid #ddd;border-radius:10px;overflow:hidden}
-    .card img{width:100%;height:160px;object-fit:cover;background:#f5f5f5}
-    .info{padding:10px}
-    .title{font-weight:700;margin-bottom:6px}
-    .price{color:#0a7;font-weight:700}
-    .muted{color:#666;font-size:13px}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kategori</title>
+
+<style>
+body{font-family:Arial;margin:0;padding:20px;background:#f5f5f5}
+a{text-decoration:none;color:#333}
+.ust{margin-bottom:20px}
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:16px;
+}
+.card{
+background:#fff;
+border-radius:10px;
+overflow:hidden;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+}
+.card img{
+width:100%;
+height:160px;
+object-fit:cover;
+background:#eee;
+}
+.info{padding:10px}
+.title{font-weight:700;font-size:14px;margin-bottom:6px}
+.price{color:#0a7;font-weight:700}
+</style>
 </head>
+
 <body>
 
-  <div class="top">
-    <a href="./index.html">← Anasayfa</a>
-    <div id="catInfo" class="muted"></div>
-  </div>
+<div class="ust">
+<a href="./index.html">← Anasayfa</a>
+</div>
 
-  <div id="grid" class="grid"></div>
+<div id="grid" class="grid"></div>
 
-  <script>
-    function getParam(name){
-      const u = new URL(location.href);
-      return (u.searchParams.get(name) || "").trim();
-    }
-
-    async function getProducts(){
-      const res = await fetch("./veri/urunler.json", { cache: "no-store" });
-      if(!res.ok) throw new Error("urunler.json okunamadı: " + res.status);
-      return await res.json();
-    }
-
-    function normalizeCat(x){
-      return String(x||"").toLowerCase().trim();
-    }
-
-    function imgSrc(p){
-      const v = (p.img || p.image || "").trim();
-      if(!v) return "";
-      if(v.startsWith("http")) return v;
-      return "./resimler/" + v;
-    }
-
-    async function main(){
-      const cat = getParam("category"); // ör: cam, jant...
-      const grid = document.getElementById("grid");
-      const info = document.getElementById("catInfo");
-
-      const products = await getProducts();
-      const list = products.filter(p => !cat || normalizeCat(p.category) === normalizeCat(cat));
-
-      info.textContent = cat ? `Kategori: ${cat} • ${list.length} ürün` : `Tüm ürünler • ${list.length} ürün`;
-
-      grid.innerHTML = list.map(p => `
-        <div class="card">
-          <img src="${imgSrc(p)}" alt="">
-          <div class="info">
-            <div class="title">${(p.title||p.name||"").toString()}</div>
-            <div class="price">${(p.price ?? "").toString()}</div>
-          </div>
-        </div>
-      `).join("");
-    }
-
-    main().catch(err => {
-      document.getElementById("catInfo").textContent = "Hata: " + err.message;
-      console.error(err);
-    });
-  <script>
-async function renderProducts() {
-  const params = new URLSearchParams(window.location.search);
-  const cat = params.get("category");
-
-  const res = await fetch("veri/urunler.json");
-  const data = await res.json();
-
-  const grid = document.getElementById("grid");
-
-  const filtered = data.filter(p => p.category === cat);
-
-  grid.innerHTML = filtered.map(p => `
-    <div class="kart">
-      <img src="${p.img}">
-      <div class="bilgi">
-        <div class="baslik">${P.title}</div>
-<div class="fiyat">${P.price} TL</div>
-      </div>
-    </div>
-  `).join("");
+<script>
+function getKategori(){
+const url=new URL(window.location.href);
+return (url.searchParams.get("category")||url.searchParams.get("kategori")||"").toLowerCase();
 }
 
-renderProducts();
+async function yukle(){
+const res=await fetch("veri/urunler.json");
+const data=await res.json();
+
+const kategori=getKategori();
+const liste=data.filter(p=>String(p.category||"").toLowerCase()===kategori);
+
+const grid=document.getElementById("grid");
+
+grid.innerHTML=liste.map(p=>`
+<div class="card">
+<img src="${p.img}">
+<div class="info">
+<div class="title">${p.title}</div>
+<div class="price">${p.price} TL</div>
+</div>
+</div>
+`).join("");
+}
+
+yukle();
 </script>
 
 </body>
 </html>
-
-
