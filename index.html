@@ -28,6 +28,50 @@ Pınar Oto Aksesuar • Orijinal Ürün • Ücretsiz Kargo • Satış Sonrası
 </div>
 
 <div class="header">
+    <div class="header">
+  <div class="header-inner">
+
+    <div class="brand">
+      <strong>Pınar Oto Aksesuar</strong>
+      <small>Oto Aksesuar & Donanım</small>
+    </div>
+
+    <div class="header-actions" id="authArea">
+      <a class="member-link" href="login.html">Giriş Yap</a>
+      <a class="member-link" href="uye.html">Üye Ol</a>
+      <a class="cart-link" href="cart.html">Sepet (<span id="cartCount">0</span>)</a>
+    </div>
+
+  </div>
+</div>
+
+<div class="filters">
+  <div class="filters-inner">
+
+    <div class="select-wrap">
+      <select id="brand"></select>
+    </div>
+
+    <div class="select-wrap">
+      <select id="model"></select>
+    </div>
+
+    <div class="select-wrap">
+      <select id="year"></select>
+    </div>
+
+    <button class="filter-btn primary" onclick="saveFilters()">Uygula</button>
+    <button class="filter-btn" onclick="clearFilters()">Sıfırla</button>
+
+  </div>
+</div>
+
+<div class="search-row">
+  <div class="search-inner">
+    <input id="q" type="text" placeholder="Kategori ara (ör: cam, jant)">
+    <button onclick="render()">Ara</button>
+  </div>
+</div>
 <div class="wrap">
 <h2>Pınar Oto Aksesuar</h2>
 
