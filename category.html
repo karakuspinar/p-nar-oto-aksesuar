@@ -73,7 +73,32 @@
       document.getElementById("catInfo").textContent = "Hata: " + err.message;
       console.error(err);
     });
-  </script>
+  <script>
+async function renderProducts() {
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get("category");
+
+  const res = await fetch("veri/urunler.json");
+  const data = await res.json();
+
+  const grid = document.getElementById("grid");
+
+  const filtered = data.filter(p => p.category === cat);
+
+  grid.innerHTML = filtered.map(p => `
+    <div class="kart">
+      <img src="${p.img}">
+      <div class="bilgi">
+        <div class="baslik">${p.title}</div>
+        <div class="fiyat">${p.price} TL</div>
+      </div>
+    </div>
+  `).join("");
+}
+
+renderProducts();
+</script>
 
 </body>
 </html>
+
