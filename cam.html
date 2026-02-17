@@ -1,0 +1,52 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Kategori</title>
+<style>
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{background:#fff;padding:10px;border-radius:10px}
+img{width:100%;height:180px;object-fit:cover}
+button{padding:10px;background:#ff2e88;color:#fff;border:none;border-radius:10px}
+</style>
+</head>
+<body>
+
+<h2>Ürünler</h2>
+<div class="grid" id="urunler"></div>
+
+<script>
+fetch("products.json")
+.then(r=>r.json())
+.then(data=>{
+
+const kategori = "cam";
+
+let html="";
+
+data
+.filter(x=>x.kategori==kategori)
+.forEach(u=>{
+
+html+=`
+<div class="card">
+<img src="${u.resim}">
+<h3>${u.ad}</h3>
+<p>${u.fiyat} TL</p>
+<button onclick="detay(${u.id})">İncele</button>
+</div>
+`;
+
+});
+
+document.getElementById("urunler").innerHTML=html;
+
+});
+
+function detay(id){
+location.href="urun.html?id="+id;
+}
+</script>
+
+</body>
+</html>

@@ -1,112 +1,24 @@
 <!doctype html>
 <html lang="tr">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Giriş Yap - Pınar Oto Aksesuar</title>
-
-  <style>
-    body{
-      margin:0;
-      font-family:Arial, sans-serif;
-      background:#fff1f6;
-    }
-    .box{
-      max-width:420px;
-      margin:80px auto;
-      background:#fff;
-      border-radius:16px;
-      padding:24px;
-      box-shadow:0 10px 30px rgba(0,0,0,.12);
-    }
-    h1{
-      text-align:center;
-      color:#ff2e88;
-      margin:0 0 16px;
-    }
-    input{
-      width:100%;
-      padding:14px;
-      margin-bottom:12px;
-      border-radius:12px;
-      border:1px solid #f2c6d8;
-      outline:none;
-    }
-    input:focus{
-      border-color:#ff66ad;
-      box-shadow:0 0 0 4px rgba(255,46,136,.12);
-    }
-    button{
-      width:100%;
-      padding:14px;
-      border:none;
-      border-radius:14px;
-      background:linear-gradient(90deg,#ff2e88,#ff66ad);
-      color:#fff;
-      font-weight:900;
-      cursor:pointer;
-    }
-    button:hover{ opacity:.95; }
-    .links{
-      display:flex;
-      justify-content:space-between;
-      margin-top:12px;
-      gap:10px;
-    }
-    a{
-      flex:1;
-      text-align:center;
-      color:#ff2e88;
-      font-weight:900;
-      text-decoration:none;
-      padding:10px 12px;
-      border-radius:12px;
-      border:1px solid #f2c6d8;
-      background:#fff;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giriş Yap</title>
+<style>
+body{font-family:Arial;background:#fff5f8;margin:0}
+.box{max-width:400px;margin:60px auto;background:#fff;padding:20px;border-radius:12px}
+input{width:100%;padding:12px;margin:8px 0;border:1px solid #ddd;border-radius:10px}
+button{width:100%;padding:12px;border:none;border-radius:10px;background:#ff2e88;color:#fff;font-weight:bold}
+a{display:block;margin-top:12px;text-align:center}
+</style>
 </head>
-
 <body>
-
 <div class="box">
-  <h1>Giriş Yap</h1>
-
-  <input id="email" type="email" placeholder="E-posta">
-  <input id="pass" type="password" placeholder="Şifre (demo)">
-
-  <button onclick="login()">Giriş Yap</button>
-
-  <div class="links">
-    <a href="uye.html">Üye Ol</a>
-    <a href="index.html">Ana Sayfa</a>
-  </div>
+<h2>Giriş Yap</h2>
+<input placeholder="E-posta">
+<input placeholder="Şifre" type="password">
+<button onclick="alert('Şimdilik demo')">Giriş</button>
+<a href="index.html">← Anasayfa</a>
 </div>
-
-<script>
-  // Üye ol sayfasından gelen demo bilgiyi e-postaya otomatik yaz
-  const demo = JSON.parse(localStorage.getItem("demo_user") || "null");
-  if(demo && demo.email){
-    document.getElementById("email").value = demo.email;
-  }
-
-  function login(){
-    const email = document.getElementById("email").value.trim();
-    if(!email){
-      alert("E-posta gir");
-      return;
-    }
-
-    // demo user varsa ad soyadı da al
-    const demoUser = JSON.parse(localStorage.getItem("demo_user") || "null");
-    const name = (demoUser && demoUser.email === email) ? (demoUser.name || "") : "";
-
-    localStorage.setItem("user", JSON.stringify({ email, name }));
-
-    alert("Giriş yapıldı ✅");
-    window.location.href = "index.html";
-  }
-</script>
-
 </body>
 </html>
