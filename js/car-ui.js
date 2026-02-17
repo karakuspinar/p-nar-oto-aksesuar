@@ -1,29 +1,55 @@
-// TÜM RESİMLER images/ KLASÖRÜNDEN GELİR
+const brand = document.getElementById("brand");
+const model = document.getElementById("model");
+const year = document.getElementById("year");
 
-const PRODUCTS = [
-  { title: "Cam", image: "images/cam.jpg" },
-  { title: "Difüzör", image: "images/difuzor.jpg" },
-  { title: "Kolçak", image: "images/kolcak.jpg" },
-  { title: "Krom Ürünler", image: "images/krom.jpg" },
-  { title: "Kaput", image: "images/kaput.jpg" },
-  { title: "Paspas", image: "images/paspas.jpg" },
-  { title: "Koltuk", image: "images/koltuk.jpg" },
-  { title: "Marşpiyel", image: "images/marspiyel.jpg" },
-  { title: "Tavan", image: "images/tavan.jpg" },
-  { title: "Ayna", image: "images/ayna.jpg" },
-  { title: "Jant", image: "images/jant.jpg" },
-  { title: "Tozluk", image: "images/tozluk.jpg" },
-  { title: "Telefon Tutucu", image: "images/telefon.jpg" }
-];
+function loadBrands(){
+  brand.innerHTML = `<option value="">Marka</option>`;
 
-const CATEGORIES = PRODUCTS;
+  Object.keys(CAR_DATA).sort().forEach(b=>{
+    brand.innerHTML += `<option>${b}</option>`;
+  });
+}
 
+brand.addEventListener("change", ()=>{
+  const b = brand.value;
 
-// 🔥 JSON TEST
-fetch("./products.json")
-  .then(res => res.json())
-  .then(data => {
-    console.log("JSON GELDI:", data);
-  })
+  model.innerHTML = `<option value="">Model</option>`;
+  year.innerHTML = `<option value="">Yıl</option>`;
 
-  .catch(err => console.log("JSON HATA:", err));
+  if(!CAR_DATA[b]) return;
+
+  Object.keys(CAR_DATA[b]).sort().forEach(m=>{
+    model.innerHTML += `<option>${m}</option>`;
+  });
+});
+
+model.addEventListener("change", ()=>{
+  const b = brand.value;
+  const m = model.value;
+
+  year.innerHTML = `<option value="">Yıl</option>`;
+
+  if(!CAR_DATA[b] || !CAR_DATA[b][m]) return;
+
+  CAR_DATA[b][m].forEach(y=>{
+    year.innerHTML += `<option>${y}</option>`;
+  });
+});
+// Uygula
+function saveFilters() {
+  const brand = document.getElementById("brand").value;
+  const model = document.getElementById("model").value;
+  const year = document.getElementById("year").value;
+
+  console.log("Seçilen:", brand, model, year);
+
+  alert("Filtre uygulandı:\n" + brand + " " + model + " " + year);
+}
+
+// Sıfırla
+function clearFilters() {
+  document.getElementById("brand").selectedIndex = 0;
+  document.getElementById("model").innerHTML = '<option value="">Model</option>';
+  document.getElementById("year").innerHTML = '<option value="">Model Yılı</option>';
+}
+loadBrands();

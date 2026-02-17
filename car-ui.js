@@ -1,90 +1,55 @@
-console.log("car-ui.js yüklendi ✅", CAR_DATA);
-// js/car-ui.js
-// Sayfada brand/model/year select varsa otomatik doldurur.
-// Seçimleri localStorage -> carFilters içine kaydeder.
+const brand = document.getElementById("brand");
+const model = document.getElementById("model");
+const year = document.getElementById("year");
 
-function $(id){ return document.getElementById(id); }
+function loadBrands(){
+  brand.innerHTML = `<option value="">Marka</option>`;
 
-function fillSelect(selectEl, items, placeholder){
-  if(!selectEl) return;
-  selectEl.innerHTML = "";
-  const opt0 = document.createElement("option");
-  opt0.value = "";
-  opt0.textContent = placeholder;
-  selectEl.appendChild(opt0);
-
-  items.forEach(v=>{
-    const opt = document.createElement("option");
-    opt.value = v;
-    opt.textContent = v;
-    selectEl.appendChild(opt);
+  Object.keys(CAR_DATA).sort().forEach(b=>{
+    brand.innerHTML += `<option>${b}</option>`;
   });
 }
 
-function getCarFilters(){
-  return JSON.parse(localStorage.getItem("carFilters") || "null");
+brand.addEventListener("change", ()=>{
+  const b = brand.value;
+
+  model.innerHTML = `<option value="">Model</option>`;
+  year.innerHTML = `<option value="">Yıl</option>`;
+
+  if(!CAR_DATA[b]) return;
+
+  Object.keys(CAR_DATA[b]).sort().forEach(m=>{
+    model.innerHTML += `<option>${m}</option>`;
+  });
+});
+
+model.addEventListener("change", ()=>{
+  const b = brand.value;
+  const m = model.value;
+
+  year.innerHTML = `<option value="">Yıl</option>`;
+
+  if(!CAR_DATA[b] || !CAR_DATA[b][m]) return;
+
+  CAR_DATA[b][m].forEach(y=>{
+    year.innerHTML += `<option>${y}</option>`;
+  });
+});
+// Uygula
+function saveFilters() {
+  const brand = document.getElementById("brand").value;
+  const model = document.getElementById("model").value;
+  const year = document.getElementById("year").value;
+
+  console.log("Seçilen:", brand, model, year);
+
+  alert("Filtre uygulandı:\n" + brand + " " + model + " " + year);
 }
 
-function setCarFilters(obj){
-  localStorage.setItem("carFilters", JSON.stringify(obj));
+// Sıfırla
+function clearFilters() {
+  document.getElementById("brand").selectedIndex = 0;
+  document.getElementById("model").innerHTML = '<option value="">Model</option>';
+  document.getElementById("year").innerHTML = '<option value="">Model Yılı</option>';
 }
-
-function initCarSelectors(){
-  const brandEl = $("brand");
-  const modelEl = $("model");
-  const yearEl  = $("year");
-
-  // Bu sayfada select yoksa çık
-  if(!brandEl || !modelEl || !yearEl) return;
-
-  // Marka doldur
-  const brands = Object.keys(CAR_DATA || {}).sort((a,b)=> a.localeCompare(b, "tr"));
-  fillSelect(brandEl, brands, "Marka");
-
-  function onBrandChange(){
-    const brand = brandEl.value;
-    const models = brand && CAR_DATA[brand] ? Object.keys(CAR_DATA[brand]).sort((a,b)=> a.localeCompare(b, "tr")) : [];
-    fillSelect(modelEl, models, "Model");
-    fillSelect(yearEl, [], "Model Yılı / Kasa");
-    save();
-  }
-
-  function onModelChange(){
-    const brand = brandEl.value;
-    const model = modelEl.value;
-    const years =
-      (brand && model && CAR_DATA[brand] && CAR_DATA[brand][model]) ? CAR_DATA[brand][model] : [];
-    fillSelect(yearEl, years, "Model Yılı / Kasa");
-    save();
-  }
-
-  function save(){
-    setCarFilters({
-      brand: brandEl.value || "",
-      model: modelEl.value || "",
-      year: yearEl.value || ""
-    });
-  }
-
-  brandEl.addEventListener("change", onBrandChange);
-  modelEl.addEventListener("change", onModelChange);
-  yearEl.addEventListener("change", save);
-
-  // Daha önce seçim varsa geri yükle
-  const saved = getCarFilters();
-  if(saved && saved.brand){
-    brandEl.value = saved.brand;
-    onBrandChange();
-
-    if(saved.model){
-      modelEl.value = saved.model;
-      onModelChange();
-
-      if(saved.year){
-        yearEl.value = saved.year;
-      }
-    }
-  }
-}
-
-document.addEventListener("DOMContentLoaded", initCarSelectors);
+loadBrands();
