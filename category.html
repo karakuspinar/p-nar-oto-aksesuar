@@ -53,48 +53,35 @@ cursor:pointer;
 
 <script>
 const params = new URLSearchParams(window.location.search);
-const kategori = params.get("cat");
 
-document.getElementById("baslik").innerText = kategori;
+const brand = (params.get("brand") || "").toLowerCase();
+const model = (params.get("model") || "").toLowerCase();
+const year  = (params.get("year")  || "").toLowerCase();
 
 fetch("products.json")
-.then(res=>res.json())
+.then(r=>r.json())
 .then(data=>{
 
-let html="";
+  let html="";
 
-data
-.filter(u => u.kategori == kategori)
-.forEach(u=>{
+  data.forEach(p=>{
+    const text = (p.ad + " " + p.aciklama).toLowerCase();
 
-html += `
-<div class="card">
-<img src="${u.resim}">
-<h3>${u.ad}</h3>
-<p>${u.fiyat} TL</p>
+    if(brand && !text.includes(brand)) return;
+    if(model && !text.includes(model)) return;
+    if(year  && !text.includes(year))  return;
 
-<a href="urun.html?id=${u.id}">
-<button>Ürünü İncele</button>
-</a>
-
-</div>
-`;
-
-});
-
-document.getElementById("urunler").innerHTML = html;
-
-});
-const params = new URLSearchParams(window.location.search);
-const brand = params.get("brand");
-
-if(brand){
-  document.querySelectorAll(".card").forEach(card=>{
-    if(!card.innerText.toLowerCase().includes(brand.toLowerCase())){
-      card.style.display="none";
-    }
+    html += `
+    <div class="card">
+      <img src="${p.resim}">
+      <h3>${p.ad}</h3>
+      <p>${p.fiyat} TL</p>
+    </div>
+    `;
   });
-}
+
+  document.getElementById("urunler").innerHTML = html;
+});
 </script>
 
 </body>
